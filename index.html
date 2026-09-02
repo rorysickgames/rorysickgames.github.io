@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loading</title>
+</head>
+<body style="background-color: white; color: black; font-family: 'Times New Roman', Times, serif;">
+
+    <div id="status">Loading... 0%</div>
+
+    <script>
+        // Check how the page was accessed
+        const navEntries = performance.getEntriesByType("navigation");
+        if (navEntries.length > 0 && navEntries[0].type === "back_forward") {
+            // User clicked the back button to get here
+            document.body.innerHTML = "An error occoured. Please refresh.";
+        } else {
+            // Normal load or refresh starts the torture
+            let progress = 0;
+            const statusDiv = document.getElementById("status");
+
+            function loadTick() {
+                // Hard stop at 99%
+                if (progress >= 99) {
+                    progress = 99;
+                    statusDiv.innerHTML = "Loading... " + progress + "%";
+                    return; 
+                }
+
+                statusDiv.innerHTML = "Loading... " + progress + "%";
+
+                let nextDelay = 200; 
+                let increment = 1;
+
+                const rand = Math.random();
+
+                if (rand < 0.2) {
+                    // 20% chance to get stuck for 1.5 to 4 seconds
+                    increment = 0;
+                    nextDelay = Math.floor(Math.random() * 2500) + 1500;
+                } else if (rand > 0.8) {
+                    // 20% chance to jump ahead by 5 to 15 percent
+                    increment = Math.floor(Math.random() * 10) + 5;
+                    nextDelay = Math.floor(Math.random() * 300) + 100;
+                } else {
+                    // Normal slow crawl
+                    increment = Math.floor(Math.random() * 3) + 1;
+                    nextDelay = Math.floor(Math.random() * 400) + 200;
+                }
+
+                progress += increment;
+                
+                // Prevent overshooting 99% before it hits the check
+                if (progress > 99) {
+                    progress = 99;
+                }
+
+                setTimeout(loadTick, nextDelay);
+            }
+
+            // Start the loading sequence
+            setTimeout(loadTick, 500);
+        }
+    </script>
+</body>
+</html>

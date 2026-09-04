@@ -1,65 +1,150 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Loading</title>
-</head>
-<body style="background-color: white; color: black; font-family: 'Times New Roman', Times, serif;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Downloads Site</title>
+    
+    <style>
+        /* --- DESIGN & LOOKS --- */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
 
-    <div id="status">Loading... 0%</div>
+        /* Top menu bar */
+        nav {
+            background-color: #333;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav button {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        nav button:hover {
+            background-color: #777;
+        }
+
+
+
+        /* Hide/Show logic for pages */
+        .page {
+            display: none;
+        }
+
+        .active-page {
+            display: block;
+        }
+
+        /* --- STYLES FOR THE DOWNLOAD LISTS --- */
+        .download-list {
+            list-style-type: none; /* Removes standard bullet points */
+            padding: 0;
+        }
+
+        .download-list li {
+            margin-bottom: 25px; /* Keeps spacing between items */
+        }
+
+        .download-list h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .download-list p {
+            margin: 0 0 10px 0;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* The download button */
+        a.download-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        a.download-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <button onclick="showPage('about')">useless</button>
+        <button onclick="showPage('documents')">Gaems</button>
+        <button onclick="showPage('media')">movies</button>
+    </nav>
+
+
+    <div class="content-container">
+        
+        <div id="about" class="page active-page">
+            <h2>about tis thingy</h2>
+            <p>Easy way to download stuff!1111!1</p>
+            <p>Gatekeep this with your life.</p>
+        </div>
+
+        <div id="documents" class="page">
+            <h2>gAEM Downloads</h2>
+            
+            <ul class="download-list">
+                <li>
+                    <h3>Plague inc</h3>
+
+                    <a href="https://drive.google.com/file/d/1tat84S_1qrV8peyhWYcMYk_9bIvVIx7A/view?usp=sharing" target="_blank" class="download-btn">Download GAEM</a>
+                </li>
+                
+                <li>
+                    <h3>Deltarune</h3>
+                    <a href="https://drive.google.com/file/d/1VPOS2SZ8qWqQv4Lk5B_6_nEZsaSvbYF0/view?usp=sharing" target="_blank" class="download-btn">Download GAEM</a>
+                </li>
+                <li>
+                    <h3>QT</h3>
+                    <a href="https://drive.google.com/file/d/11fNV0hRF6gm3T1JI2LMY7f7AzFNUV0cN/view?usp=sharing" target="_blank" class="download-btn">Download GAEM</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="media" class="page">
+            <h2>m</h2>
+            
+            <ul class="download-list">
+                nothing here yet
+            </ul>
+        </div>
+
+    </div>
+
 
     <script>
-        // Check how the page was accessed
-        const navEntries = performance.getEntriesByType("navigation");
-        if (navEntries.length > 0 && navEntries[0].type === "back_forward") {
-            // User clicked the back button to get here
-            document.body.innerHTML = "An error occoured. Please refresh.";
-        } else {
-            // Normal load or refresh starts the torture
-            let progress = 0;
-            const statusDiv = document.getElementById("status");
-
-            function loadTick() {
-                // Hard stop at 99%
-                if (progress >= 99) {
-                    progress = 99;
-                    statusDiv.innerHTML = "Loading... " + progress + "%";
-                    return; 
-                }
-
-                statusDiv.innerHTML = "Loading... " + progress + "%";
-
-                let nextDelay = 200; 
-                let increment = 1;
-
-                const rand = Math.random();
-
-                if (rand < 0.2) {
-                    // 20% chance to get stuck for 1.5 to 4 seconds
-                    increment = 0;
-                    nextDelay = Math.floor(Math.random() * 2500) + 1500;
-                } else if (rand > 0.8) {
-                    // 20% chance to jump ahead by 5 to 15 percent
-                    increment = Math.floor(Math.random() * 10) + 5;
-                    nextDelay = Math.floor(Math.random() * 300) + 100;
-                } else {
-                    // Normal slow crawl
-                    increment = Math.floor(Math.random() * 3) + 1;
-                    nextDelay = Math.floor(Math.random() * 400) + 200;
-                }
-
-                progress += increment;
-                
-                // Prevent overshooting 99% before it hits the check
-                if (progress > 99) {
-                    progress = 99;
-                }
-
-                setTimeout(loadTick, nextDelay);
+        function showPage(pageId) {
+            // Find all pages and hide them
+            let allPages = document.querySelectorAll('.page');
+            for (let i = 0; i < allPages.length; i++) {
+                allPages[i].classList.remove('active-page');
             }
 
-            // Start the loading sequence
-            setTimeout(loadTick, 500);
+            // Show the page that was clicked
+            document.getElementById(pageId).classList.add('active-page');
         }
     </script>
+
 </body>
 </html>

@@ -5,10 +5,22 @@ export const doorState = {
     left: { door: false, light: false, animating: false },
     right: { door: false, light: false, animating: false }
 };
-
 const doorFrames = {
-    left: ['assets/images/88.png', 'assets/images/105.png', 'assets/images/89.png', 'assets/images/91.png', 'assets/images/102.png'],
-    right: ['assets/images/104.png', 'assets/images/121.png', 'assets/images/196.png', 'assets/images/106.png', 'assets/images/118.png']
+    left: [
+        'assets/images/88.png', 'assets/images/105.png', 'assets/images/89.png',
+        'assets/images/91.png', 'assets/images/92.png', 'assets/images/93.png',
+        'assets/images/94.png', 'assets/images/95.png', 'assets/images/96.png',
+        'assets/images/97.png', 'assets/images/98.png', 'assets/images/99.png',
+        'assets/images/100.png', 'assets/images/101.png', 'assets/images/102.png'
+    ],
+    right: [
+        'assets/images/104.png', 'assets/images/121.png', 'assets/images/196.png',
+        'assets/images/106.png', 'assets/images/107.png', 'assets/images/108.png',
+        'assets/images/109.png', 'assets/images/110.png', 'assets/images/111.png',
+        'assets/images/112.png', 'assets/images/113.png', 'assets/images/114.png',
+        'assets/images/115.png', 'assets/images/116.png', 'assets/images/117.png',
+        'assets/images/118.png'
+    ]
 };
 
 export function initDoors() {

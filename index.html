@@ -35,8 +35,6 @@
             background-color: #777;
         }
 
-
-
         /* Hide/Show logic for pages */
         .page {
             display: none;
@@ -50,6 +48,7 @@
         .download-list {
             list-style-type: none; /* Removes standard bullet points */
             padding: 0;
+            margin: 20px;
         }
 
         .download-list li {
@@ -68,19 +67,67 @@
             line-height: 1.4;
         }
 
-        /* The download button */
-        a.download-btn {
+        /* The download & play buttons */
+        .action-btn {
             display: inline-block;
             padding: 8px 15px;
             background-color: #007bff;
             color: white;
             text-decoration: none;
+            border: none;
             border-radius: 4px;
             font-size: 14px;
+            cursor: pointer;
         }
 
-        a.download-btn:hover {
+        .action-btn:hover {
             background-color: #0056b3;
+        }
+
+        /* --- STYLES FOR THE GAME PLAYER --- */
+        #game-player-container {
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        #game-iframe {
+            border: 2px solid #333;
+            border-radius: 8px;
+            background-color: #000;
+            width: 800px;
+            max-width: 100%;
+            height: 600px;
+        }
+
+        .fullscreen-btn {
+            margin-top: 15px;
+            background-color: #28a745;
+        }
+
+        .fullscreen-btn:hover {
+            background-color: #218838;
+        }
+
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .back-btn:hover {
+            background-color: #c82333;
+        }
+        
+        .content-container h2, .content-container p {
+            margin-left: 20px;
         }
     </style>
 </head>
@@ -106,18 +153,22 @@
             
             <ul class="download-list">
                 <li>
+                    <h3>Five Nights at Freddy's 1</h3>
+                    <button class="action-btn" onclick="playGame('iframes/fnaf1html/index.html')">Play GAEM in Browser</button>
+                </li>
+                
+                <li>
                     <h3>Plague inc</h3>
-
-                    <a href="https://drive.google.com/file/d/1tat84S_1qrV8peyhWYcMYk_9bIvVIx7A/view?usp=sharing" target="_blank" class="download-btn">Download GAEM</a>
+                    <a href="https://drive.google.com/file/d/1tat84S_1qrV8peyhWYcMYk_9bIvVIx7A/view?usp=sharing" target="_blank" class="action-btn">Download GAEM</a>
                 </li>
                 
                 <li>
                     <h3>Deltarune</h3>
-                    <a href="https://drive.google.com/file/d/1VPOS2SZ8qWqQv4Lk5B_6_nEZsaSvbYF0/view?usp=sharing" target="_blank" class="download-btn">Download GAEM</a>
+                    <a href="https://drive.google.com/file/d/1VPOS2SZ8qWqQv4Lk5B_6_nEZsaSvbYF0/view?usp=sharing" target="_blank" class="action-btn">Download GAEM</a>
                 </li>
                 <li>
                     <h3>QT</h3>
-                    <a href="https://drive.google.com/file/d/11fNV0hRF6gm3T1JI2LMY7f7AzFNUV0cN/view?usp=sharing" target="_blank" class="download-btn">Download GAEM</a>
+                    <a href="https://drive.google.com/file/d/11fNV0hRF6gm3T1JI2LMY7f7AzFNUV0cN/view?usp=sharing" target="_blank" class="action-btn">Download GAEM</a>
                 </li>
             </ul>
         </div>
@@ -130,11 +181,24 @@
             </ul>
         </div>
 
-    </div>
+        <div id="game-player" class="page">
+            <div id="game-player-container">
+                <iframe id="game-iframe" src="" allowfullscreen></iframe>
+                <br>
+                <button class="action-btn fullscreen-btn" onclick="toggleFullScreen()">Fullscreen</button>
+            </div>
+            <button class="back-btn" onclick="showPage('documents')">⬅ Back to Gaems</button>
+        </div>
 
+    </div>
 
     <script>
         function showPage(pageId) {
+            // Stop the game iframe if we are navigating away so audio doesn't keep playing
+            if (pageId !== 'game-player') {
+                document.getElementById('game-iframe').src = "";
+            }
+
             // Find all pages and hide them
             let allPages = document.querySelectorAll('.page');
             for (let i = 0; i < allPages.length; i++) {
@@ -143,6 +207,24 @@
 
             // Show the page that was clicked
             document.getElementById(pageId).classList.add('active-page');
+        }
+
+        // Function to load the game into the iframe and switch to the player page
+        function playGame(gamePath) {
+            document.getElementById('game-iframe').src = gamePath;
+            showPage('game-player');
+        }
+
+        // Function to handle the fullscreen request for the iframe
+        function toggleFullScreen() {
+            let iframe = document.getElementById('game-iframe');
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.webkitRequestFullscreen) { /* Safari */
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.msRequestFullscreen) { /* IE11 */
+                iframe.msRequestFullscreen();
+            }
         }
     </script>
 

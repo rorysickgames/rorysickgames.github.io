@@ -14,7 +14,15 @@ export function initDevMover() {
     gameScreen.addEventListener('mousedown', (e) => {
         if (!document.body.classList.contains('dev-mode')) return;
 
-        // Find if we clicked a draggable element
+        // If Ctrl is NOT held, deselect and abort dragging
+        if (!e.ctrlKey) {
+            if (selectedElement) {
+                selectedElement.classList.remove('dev-selected');
+                selectedElement = null;
+            }
+            return;
+        }
+
         const target = e.target.closest('.draggable');
         
         if (selectedElement) {
@@ -29,7 +37,6 @@ export function initDevMover() {
 
             const coords = getNativeCoords(e.clientX, e.clientY, officeBg);
             
-            // Extract current X/Y from inline calc styles or default to 0
             const currentLeftMatch = target.style.left.match(/(\d+)\s*\//);
             const currentTopMatch = target.style.top.match(/(\d+)\s*\//);
             
@@ -38,7 +45,7 @@ export function initDevMover() {
 
             dragOffsetX = coords.x - elementX;
             dragOffsetY = coords.y - elementY;
-            e.preventDefault(); // Prevent ghost dragging
+            e.preventDefault();
         }
     });
 

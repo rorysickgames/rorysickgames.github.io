@@ -14,11 +14,14 @@
 
             <div class="obj-label dev-ui" style="left: calc((20 / 1600) * 100%); top: calc((240 / 720) * 100%);">Left Btn<br>X: 0 | Y: 280</div>
             <div class="obj-label dev-ui" style="left: calc((1492 / 1600) * 100%); top: calc((240 / 720) * 100%);">Right Btn<br>X: 1492 | Y: 280</div>
-            
-            <img src="assets/images/122.png" id="left-btn" class="door-btn" draggable="false" alt="Left Door Button">
-            <img src="assets/images/134.png" id="right-btn" class="door-btn" draggable="false" alt="Right Door Button">
 
-            <div id="fan-wrapper">
+            <img src="" id="left-door" class="door-sprite draggable dev-ui-ignore" alt="Left Door" style="left: calc((88 / 1600) * 100%); top: 0; display: none;">
+            <img src="" id="right-door" class="door-sprite draggable dev-ui-ignore" alt="Right Door" style="left: calc((104 / 1600) * 100%); top: 0; display: none;">
+            
+            <img src="assets/images/122.png" id="left-btn" class="door-btn draggable" draggable="false" alt="Left Door Button">
+            <img src="assets/images/134.png" id="right-btn" class="door-btn draggable" draggable="false" alt="Right Door Button">
+
+            <div id="fan-wrapper" class="draggable">
                 <div class="obj-label dev-ui" style="left: 50%; top: -30px; transform: translateX(-50%);">Desk Fan<br>X: 780 | Y: 303</div>
                 <img id="fan-img" src="assets/images/57.png" alt="Desk Fan">
             </div>
@@ -46,5 +49,6 @@
     </div>
 
     <script type="module" src="js/main.js"></script>
+    <audio id="door-sound" src="assets/audio/door.mp3"></audio>
 </body>
 </html>

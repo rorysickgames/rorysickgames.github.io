@@ -4,172 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FNAF 1 Office</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            font-family: monospace;
-            color: #fff;
-        }
-
-        /* 16:9 Auto-scaling game screen viewport */
-        #game-screen {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            max-width: calc(100vh * (16 / 9));
-            max-height: calc(100vw * (9 / 16));
-            background-color: #000;
-            overflow: hidden;
-            user-select: none; /* Prevent text selection while clicking */
-        }
-
-        /* Panning container holds background and static desk objects */
-        #office-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            will-change: transform;
-        }
-
-        #office-bg {
-            height: 100%;
-            width: auto;
-            display: block;
-            pointer-events: none;
-        }
-
-        /* Fixed Fan Placement at native X: 780px, Y: 303px */
-        #fan-wrapper {
-            position: absolute;
-            top: calc((303 / 720) * 100%);
-            left: calc((780 / 1600) * 100%);
-            height: calc((196 / 720) * 100%);
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        #fan-img {
-            display: block;
-            height: 100%;
-            width: auto;
-            pointer-events: none;
-        }
-
-        /* --- DOOR BUTTONS --- */
-        .door-btn {
-            position: absolute;
-            height: calc((250 / 720) * 100%);
-            z-index: 20;
-            cursor: pointer;
-            pointer-events: auto;
-            -webkit-user-drag: none; /* Prevents ghost dragging while holding light */
-        }
-
-        #left-btn {
-            left: 0;
-            top: calc((280 / 720) * 100%);
-        }
-
-        #right-btn {
-            left: calc((1492 / 1600) * 100%);
-            top: calc((280 / 720) * 100%);
-        }
-
-        /* Minimal plain white text overlays */
-        .ui-box {
-            color: #fff;
-            font-size: 14px;
-            pointer-events: none;
-            z-index: 100;
-            background: rgba(0,0,0,0.5);
-            padding: 8px;
-            border-radius: 4px;
-        }
-
-        #ui-panel {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-        }
-
-        #ui-panel p {
-            margin: 0;
-        }
-
-        #saved-coords {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            max-height: 80%;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            text-align: right;
-        }
-
-        #state-panel {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        /* Object Labels for Dev Mode */
-        .obj-label {
-            position: absolute;
-            color: #fff;
-            background: rgba(0,0,0,0.7);
-            padding: 4px;
-            border-radius: 4px;
-            font-size: 12px;
-            pointer-events: none;
-            z-index: 50;
-            white-space: nowrap;
-        }
-
-        /* --- DEV MODE TOGGLE --- */
-        .dev-ui {
-            visibility: hidden;
-            opacity: 0;
-        }
-        
-        .dev-mode .dev-ui {
-            visibility: visible;
-            opacity: 1;
-        }
-
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div id="game-screen">
         <div id="office-container">
-            <img src="519.png" id="office-bg" alt="FNAF 1 Office">
+            <img src="assets/images/519.png" id="office-bg" alt="FNAF 1 Office">
 
             <div class="obj-label dev-ui" style="left: calc((20 / 1600) * 100%); top: calc((240 / 720) * 100%);">Left Btn<br>X: 0 | Y: 280</div>
             <div class="obj-label dev-ui" style="left: calc((1492 / 1600) * 100%); top: calc((240 / 720) * 100%);">Right Btn<br>X: 1492 | Y: 280</div>
             
-            <img src="122.png" id="left-btn" class="door-btn" draggable="false" alt="Left Door Button">
-            <img src="134.png" id="right-btn" class="door-btn" draggable="false" alt="Right Door Button">
+            <img src="assets/images/122.png" id="left-btn" class="door-btn" draggable="false" alt="Left Door Button">
+            <img src="assets/images/134.png" id="right-btn" class="door-btn" draggable="false" alt="Right Door Button">
 
             <div id="fan-wrapper">
                 <div class="obj-label dev-ui" style="left: 50%; top: -30px; transform: translateX(-50%);">Desk Fan<br>X: 780 | Y: 303</div>
-                <img id="fan-img" src="57.png" alt="Desk Fan">
+                <img id="fan-img" src="assets/images/57.png" alt="Desk Fan">
             </div>
         </div>
 
+        <!-- Dev Mode Panels -->
         <div id="ui-panel" class="ui-box dev-ui">
             <p id="coord-display">Mouse: X: 0 | Y: 0</p>
         </div>
@@ -182,156 +37,14 @@
             <strong>Variables State</strong>
             <div id="state-content"></div>
         </div>
+
+        <div id="power-panel" class="ui-box dev-ui">
+            <strong>Power State</strong>
+            <p id="power-display">Power: 100%</p>
+            <p id="usage-display">Usage: 1</p>
+        </div>
     </div>
 
-    <script>
-        const NATIVE_WIDTH = 1600;
-        const NATIVE_HEIGHT = 720;
-
-        const gameScreen = document.getElementById('game-screen');
-        const officeContainer = document.getElementById('office-container');
-        const officeBg = document.getElementById('office-bg');
-        const coordDisplay = document.getElementById('coord-display');
-        const savedCoords = document.getElementById('saved-coords');
-        const stateContent = document.getElementById('state-content');
-        const fanImg = document.getElementById('fan-img');
-
-        const leftBtn = document.getElementById('left-btn');
-        const rightBtn = document.getElementById('right-btn');
-
-        // --- Fan Animation ---
-        const fanFrames = ['57.png', '59.png', '60.png'];
-        let currentFrame = 0;
-
-        setInterval(() => {
-            currentFrame = (currentFrame + 1) % fanFrames.length;
-            fanImg.src = fanFrames[currentFrame];
-        }, 60);
-
-        // --- Mouse Tracking & Office Panning ---
-        let currentImgX = 0;
-        let currentImgY = 0;
-
-        function getNativeCoords(clientX, clientY) {
-            const bgRect = officeBg.getBoundingClientRect();
-            const scale = bgRect.height / NATIVE_HEIGHT;
-
-            const imgX = Math.round((clientX - bgRect.left) / scale);
-            const imgY = Math.round((clientY - bgRect.top) / scale);
-
-            return {
-                x: Math.max(0, Math.min(NATIVE_WIDTH, imgX)),
-                y: Math.max(0, Math.min(NATIVE_HEIGHT, imgY))
-            };
-        }
-
-        gameScreen.addEventListener('mousemove', (e) => {
-            const screenRect = gameScreen.getBoundingClientRect();
-            const screenX = e.clientX - screenRect.left;
-
-            // Pan office background
-            const percent = Math.max(0, Math.min(1, screenX / screenRect.width));
-            const maxScroll = screenRect.width - officeBg.clientWidth;
-            officeContainer.style.transform = `translateX(${percent * maxScroll}px)`;
-
-            // Track native 1600x720 mouse coordinates
-            const coords = getNativeCoords(e.clientX, e.clientY);
-            currentImgX = coords.x;
-            currentImgY = coords.y;
-            coordDisplay.textContent = `Mouse: X: ${currentImgX} | Y: ${currentImgY}`;
-        });
-
-        // --- Keyboard Logic (Dev Mode & Save Points) ---
-        window.addEventListener('keydown', (e) => {
-            // Toggle Dev Mode on '8'
-            if (e.key === '8') {
-                document.body.classList.toggle('dev-mode');
-            }
-
-            // Save Points on 'P' (Only works if Dev Mode is active)
-            if ((e.key === 'p' || e.key === 'P') && document.body.classList.contains('dev-mode')) {
-                const entry = document.createElement('div');
-                entry.textContent = `Point ${savedCoords.children.length}: X: ${currentImgX}, Y: ${currentImgY}`;
-                savedCoords.appendChild(entry);
-                savedCoords.scrollTop = savedCoords.scrollHeight;
-            }
-        });
-
-        // --- DOOR, LIGHT, & STATE LOGIC ---
-        let states = {
-            left: { door: false, light: false },
-            right: { door: false, light: false }
-        };
-
-        function renderStateUI() {
-            stateContent.innerHTML = `
-                Left Door: <span>${states.left.door}</span><br>
-                Left Light: <span>${states.left.light}</span><br>
-                Right Door: <span>${states.right.door}</span><br>
-                Right Light: <span>${states.right.light}</span>
-            `;
-        }
-
-        // Initialize state panel
-        renderStateUI();
-
-        function updateLeftBtn() {
-            if (states.left.door && states.left.light) {
-                leftBtn.src = '130.png';
-            } else if (states.left.door) {
-                leftBtn.src = '124.png';
-            } else if (states.left.light) {
-                leftBtn.src = '125.png';
-            } else {
-                leftBtn.src = '122.png';
-            }
-            renderStateUI();
-        }
-
-        function updateRightBtn() {
-            if (states.right.door && states.right.light) {
-                rightBtn.src = '47.png';
-            } else if (states.right.door) {
-                rightBtn.src = '135.png';
-            } else if (states.right.light) {
-                rightBtn.src = '131.png';
-            } else {
-                rightBtn.src = '134.png';
-            }
-            renderStateUI();
-        }
-
-        function handleBtnMousedown(e, side) {
-            // Get accurate coordinates mapped to 1600x720 logic
-            const coords = getNativeCoords(e.clientX, e.clientY);
-
-            // Y-axis 0 is at the top of the image. 
-            // If the user clicks higher up than 410 (y < 410), it's the door.
-            // If they click lower than 410 (y >= 410), it's the light.
-            if (coords.y < 410) {
-                states[side].door = !states[side].door; // Toggle door
-            } else {
-                states[side].light = true; // Hold light
-            }
-
-            side === 'left' ? updateLeftBtn() : updateRightBtn();
-        }
-
-        function handleBtnRelease(side) {
-            states[side].light = false; // Turn off light on release
-            side === 'left' ? updateLeftBtn() : updateRightBtn();
-        }
-
-        // Left Event Listeners
-        leftBtn.addEventListener('mousedown', (e) => handleBtnMousedown(e, 'left'));
-        leftBtn.addEventListener('mouseup', () => handleBtnRelease('left'));
-        leftBtn.addEventListener('mouseleave', () => handleBtnRelease('left'));
-
-        // Right Event Listeners
-        rightBtn.addEventListener('mousedown', (e) => handleBtnMousedown(e, 'right'));
-        rightBtn.addEventListener('mouseup', () => handleBtnRelease('right'));
-        rightBtn.addEventListener('mouseleave', () => handleBtnRelease('right'));
-
-    </script>
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>

@@ -29,18 +29,19 @@ export function initDoors() {
     const officeBg = document.getElementById('office-bg');
 
     leftBtn.addEventListener('mousedown', (e) => handleBtnMousedown(e, 'left', officeBg));
-    leftBtn.addEventListener('mouseup', () => handleBtnRelease('left'));
-    leftBtn.addEventListener('mouseleave', () => handleBtnRelease('left'));
+    leftBtn.addEventListener('mouseup', (e) => handleBtnRelease(e, 'left'));
+    leftBtn.addEventListener('mouseleave', (e) => handleBtnRelease(e, 'left'));
 
     rightBtn.addEventListener('mousedown', (e) => handleBtnMousedown(e, 'right', officeBg));
-    rightBtn.addEventListener('mouseup', () => handleBtnRelease('right'));
-    rightBtn.addEventListener('mouseleave', () => handleBtnRelease('right'));
+    rightBtn.addEventListener('mouseup', (e) => handleBtnRelease(e, 'right'));
+    rightBtn.addEventListener('mouseleave', (e) => handleBtnRelease(e, 'right'));
 }
 
 function handleBtnMousedown(e, side, officeBg) {
-    // Prevent interaction if dev mode is moving things
-    if (document.body.classList.contains('dev-mode') && e.target.closest('.draggable')) return;
-    if (doorState[side].animating) return; // Don't interrupt animation
+    // ONLY ignore the click if we are in dev mode AND holding Ctrl
+    if (document.body.classList.contains('dev-mode') && e.ctrlKey) return;
+    
+    if (doorState[side].animating) return;
 
     const coords = getNativeCoords(e.clientX, e.clientY, officeBg);
 
@@ -53,8 +54,9 @@ function handleBtnMousedown(e, side, officeBg) {
     calculateUsage();
 }
 
-function handleBtnRelease(side) {
-    if (document.body.classList.contains('dev-mode')) return;
+function handleBtnRelease(e, side) {
+    // ONLY ignore the release if we are in dev mode AND holding Ctrl
+    if (document.body.classList.contains('dev-mode') && e && e.ctrlKey) return;
     
     doorState[side].light = false;
     updateButtons();
@@ -76,7 +78,6 @@ function animateDoor(side, isClosing) {
     const doorElement = document.getElementById(`${side}-door`);
     const frames = doorFrames[side];
     doorState[side].animating = true;
-    doorElement.style.display = 'block';
 
     let currentFrame = isClosing ? 0 : frames.length - 1;
     
@@ -93,11 +94,11 @@ function animateDoor(side, isClosing) {
             currentFrame--;
             if (currentFrame < 0) {
                 clearInterval(animInterval);
-                doorElement.style.display = 'none'; // Hide door completely when open
+                doorElement.src = frames[0]; // Lock to the first frame instead of hiding
                 doorState[side].animating = false;
             }
         }
-    }, 30); // 30ms per frame
+    }, 30);
 }
 
 function updateButtons() {

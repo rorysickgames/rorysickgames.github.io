@@ -146,3 +146,29 @@ body, html {
     visibility: visible;
     opacity: 1;
 }
+
+/* --- DOORS --- */
+.door-sprite {
+    position: absolute;
+    height: 100%;
+    width: auto;
+    z-index: 15; /* Behind buttons (20) but in front of fan (10) */
+    pointer-events: none;
+}
+
+/* --- DEV MODE MOVEMENT --- */
+.dev-mode .draggable {
+    pointer-events: auto !important;
+    cursor: grab;
+}
+
+.dev-mode .draggable:active {
+    cursor: grabbing;
+}
+
+/* Red highlight for selected object */
+.dev-selected {
+    outline: 2px solid red;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8) inset;
+    background-color: rgba(255, 0, 0, 0.2);
+}
